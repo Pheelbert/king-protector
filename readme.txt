@@ -10,3 +10,4 @@ Master writes to king.txt in a while True loop. X slaves are spawned which are t
 
 # TODO
 - Hide master and slaves in other processes
+- Create "game" environment where a referee is checking every x interval whose username is in the king.txt file. Try running two different implementations and see who wins!
