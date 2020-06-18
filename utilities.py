@@ -24,4 +24,11 @@ def is_pid_running(pid):
 		return False
 
 	pid = int(pid)
-	return psutil.pid_exists(pid)
+	if psutil.pid_exists(pid):
+		process = psutil.Process(pid)
+		if process.status() == psutil.STATUS_ZOMBIE:
+			return False
+		else:
+			return True
+
+	return False

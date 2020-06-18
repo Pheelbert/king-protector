@@ -5,6 +5,10 @@ import subprocess
 import time
 import utilities
 
+kill_switch_secret = 'kill' # Set secret in file called 'kill.switch' to kill all.
+current_pid = str(os.getpid())
+
+# Usage: python3 king_protector_master.py
 def main():
 	signal.signal(signal.SIGABRT, handler)
 	signal.signal(signal.SIGTERM, handler)
@@ -12,7 +16,7 @@ def main():
 	
 	try:
 		import setproctitle
-		#setproctitle.setproctitle('bash')
+		setproctitle.setproctitle('bash')
 	except ModuleNotFoundError:
 		print('setproctitle modile not installed. Skipped renaming process name.')
 
@@ -23,7 +27,6 @@ def main():
 	time_elapsed = 0
 	max_slave_count = 10
 
-	current_pid = str(os.getpid())
 	utilities.create_file_with_contents(pid_filepath, current_pid)
 	utilities.append_log(f'Master {current_pid} spawned!')
 
@@ -31,7 +34,7 @@ def main():
 
 	while True:
 		kill_switch_value = utilities.read_file_contents('kill.switch')
-		if kill_switch_value == 'kill':
+		if kill_switch_value == kill_switch_secret:
 			utilities.append_log(f'Master {current_pid} noticed the kill switch! Killing himself.')
 			print('Kill switch found!')
 			exit()
@@ -72,7 +75,7 @@ def main():
 		time_elapsed += time_interval
 
 def handler(signum, frame):
-	handle_message = f'Someone is trying to kill master with {signum}!'
+	handle_message = f'Someone is trying to kill master {current_pid} with {signum}!'
 	utilities.append_log(handle_message)
 	print(handle_message)
 
